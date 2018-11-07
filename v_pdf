@@ -1,0 +1,150 @@
+<?php
+ini_set('max_execution_time', 3600000);
+ini_set('memory_limit','-1');
+date_default_timezone_set('Asia/Jakarta');
+ob_start();
+?>
+<html>
+
+<body>
+      <!-- /.box-body -->
+      <div class="box-body" style="border: 1;border-style: solid">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div>
+                 <table width=100% border="1" style="font-family: TimesNewRoman; font-size: 6pt;border-collapse: collapse;">
+
+                      <tr>
+                        <th rowspan="3" align="left">
+                          <img src="http://localhost/new-portal/assets/profilePicture/image2.png">
+                        </th>
+
+                        <th scope="row" align="left" style="width: 100px" >No Dokumen</th>
+                        <td>CM-405-0013</td>
+                      </tr>
+
+                      <tr>
+                        <th scope="row" align="left" style="width: 100px" >Terbit</th>
+                        <td>01 September 18</td>
+                      </tr>
+
+                     <tr>
+                      <th scope="row" align="left" style="width: 100px" >Revisi</th>
+                      <td> 0 </td>
+                     </tr>
+                  </table>
+                  </div>
+              </div><!-- /.form-group -->
+            </div>
+          
+
+      <div align="center" style="border-style: solid;border: 1">
+                <!--    <table width="60%" border="1" style="font-family: TimesNewRoman; font-size: 11pt;">
+               <tr>
+                   <td align="CENTER" colspan="15">FORM KLAIM KUALITAS</td>
+               </tr>
+            </table><br>-->
+            <span  style="font-family: TimesNewRoman; font-size: 2rem;font-weight: bold;" >FORM KLAIM KUALITAS</span>
+      </div><br><!-- /.form-group -->
+
+                <div>
+
+          <?php 
+              if(isset($_GET['cari'])){
+                $cari = $_GET['cari'];
+                echo "<b>Hasil pencarian : ".$cari."</b>";
+          }
+          ?>
+
+          <table align="left" border="1" style="font-family: TimesNewRoman; font-size: 7pt;border-collapse: collapse;">
+              <tr >
+                <th align="left" style="width: 100px">Tanggal klaim</th>
+                <td align="left" style="width: 150px"><?php echo $reportdata['claimDate']; ?></td>
+              </tr>
+              <tr align="left">
+                <th align="left" style="width: 100px">No Klaim</th>
+                <td align="left" style="width: 150px"><?php echo $reportdata['claimNum']; ?></td>
+              </tr>
+              <tr align="left"> 
+                <th align="left" style="width: 100px">Main Dealer</th>
+                <td align="left" style="width: 150px"><?php echo $reportdata['customerName']; ?></td>
+              </tr>
+              <tr align="left">
+                <th align="left" style="width: 100px">Alamat</th>
+                <td align="left" style="width: 150px"><?php echo $reportdata['address']; ?></td>
+              </tr>
+              <tr align="left">
+                <th align="left" style="width: 100px">Nomor Telepon</th>
+                <td align="left" style="width: 150px"><?php echo $reportdata['phone']; ?></td>
+              </tr>
+      </table><br>
+
+        <table align right width=100% border="1" style="font-family: TimesNewRoman; font-size: 11pt;border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td align="center" valign="top" width="30px" >No</td>
+                        <td align="center" valign="top" width="250px" >Deskripsi Item</td>
+                        <td align="center" valign="top" width="50px" >Jumlah Klaim</td>
+                        <td align="center" valign="top" width="300px" >Keluhan</td>
+                        <td align="center" valign="top" width="50px" >Lot Produksi</td>
+                        <td align="center" valign="top" width="150px" >Keterangan</td>
+                        <td align="center" valign="top" width="30px" >Diterima/ditolak</td>
+                        <td align="center" valign="top" width="150px" >Keterangan</td> 
+                    </tr>
+                </thead>
+                  <tbody>
+                      <?php if (isset($reportdata)) {
+                        for ($i=0,$n=count($reportdata['details']);$i<$n; $i++)  { ?>
+                          <tr>
+                            <td style="width: 5%"><?php echo $i+1;?></td>
+                            <td><?php echo $reportdata['details'][$i]['itemDesc']; ?></td>
+                            <td><?php echo $reportdata['details'][$i]['quantity']; ?></td>
+                            <td><?php echo $reportdata['details'][$i]['claimDesc']; ?></td>
+                            <td><?php echo $reportdata['details'][$i]['prodCode']; ?></td>
+                            <td><?php echo $reportdata['details'][$i]['mdNotes']; ?></td>
+                            <td><?php echo $reportdata['details'][$i]['approveFlag']; ?></td>
+                            <td><?php echo $reportdata['details'][$i]['sriNotes']; ?></td>
+                          </tr>
+                            <?php }
+                          } ?>
+                  </tbody>
+        </table>
+
+</div>
+</div>
+</div>
+</div><!-- /.row -->         
+
+</body>
+</html>
+<?php
+         //echo $html;
+    //exit();
+    $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+    //flush();
+    ob_end_clean();
+    
+    
+    include_once APPPATH.'/third_party/mpdf60/mpdf.php';
+    //echo $param; 
+
+    //use dawood\phpChrome\Chrome;
+
+    //$chrome=new Chrome(null,'/usr/bin/google-chrome');
+    //$chrome->useHtmlFile(__DIR__.'/index.html');
+    //print "Pdf successfully generated :".$chrome->getPdf().PHP_EOL;
+
+    $mpdf=new mPDF('utf-8', 'A4', 10.5, 'arial');
+    $mpdf->AddPage('P');
+
+
+
+     //$stylesheet = file_get_contents( base_url().'assets/skin/dist/css/mpdfstyletables.css' );
+    $mpdf->WriteHTML($stylesheet,1);
+
+    $mpdf->WriteHTML(utf8_encode($html));
+    //$mpdf->debug = true; 
+    $output = $mpdf->Output('reportpdf.pdf','I');
+
+exit;
